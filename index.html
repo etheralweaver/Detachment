@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detachment Tracker 🌸</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0, #fd79a8);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2d3436;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #6c5ce7;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #636e72;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .streak-counter {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .streak-number {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .streak-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .today-section {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #fd79a8;
+            text-align: center;
+        }
+
+        .today-title {
+            font-size: 20px;
+            color: #e84393;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .check-button {
+            background: linear-gradient(135deg, #00cec9, #55a3ff);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 206, 201, 0.3);
+        }
+
+        .check-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 206, 201, 0.4);
+        }
+
+        .check-button:active {
+            transform: translateY(0);
+        }
+
+        .check-button.completed {
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            cursor: default;
+        }
+
+        .motivation {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(253, 203, 110, 0.3);
+        }
+
+        .week-view {
+            margin-top: 20px;
+        }
+
+        .week-title {
+            font-size: 18px;
+            color: #6c5ce7;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .day-header {
+            background: #ddd6fe;
+            color: #6c5ce7;
+        }
+
+        .day-success {
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            color: white;
+        }
+
+        .day-missed {
+            background: #fab1a0;
+            color: white;
+        }
+
+        .day-today {
+            background: #fd79a8;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .day-future {
+            background: #f8f9fa;
+            color: #b2bec3;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .notes-section {
+            margin-top: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #a29bfe;
+        }
+
+        .notes-title {
+            font-size: 20px;
+            color: #6c5ce7;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .today-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .add-note-button, .broke-contact-button {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-note-button {
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            color: white;
+        }
+
+        .broke-contact-button {
+            background: linear-gradient(135deg, #fab1a0, #e17055);
+            color: white;
+        }
+
+        .growth-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .growth-button {
+            background: linear-gradient(135deg, #00b894, #55efc4);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .notes-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .note-item {
+            background: rgba(255, 255, 255, 0.9);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #6c5ce7;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .note-item.broken-contact {
+            border-left-color: #e17055;
+            background: rgba(253, 177, 160, 0.1);
+        }
+
+        .note-text {
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .note-time {
+            font-size: 12px;
+            color: #636e72;
+        }
+
+        .note-delete {
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            background: none;
+            border: none;
+            color: #ddd6fe;
+            font-size: 16px;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .note-delete:hover {
+            color: #e17055;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 25px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content.growth-modal {
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #e17055;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #ddd6fe;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            resize: vertical;
+            outline: none;
+            margin-bottom: 15px;
+        }
+
+        textarea:focus {
+            border-color: #6c5ce7;
+        }
+
+        .modal-content button {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .growth-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            border-radius: 25px;
+            padding: 5px;
+        }
+
+        .growth-tab {
+            flex: 1;
+            padding: 10px 15px;
+            background: transparent;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .growth-tab.active {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+        }
+
+        .growth-content {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .growth-snippet {
+            background: rgba(108, 92, 231, 0.1);
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 3px solid #6c5ce7;
+        }
+
+        .growth-snippet-date {
+            font-size: 12px;
+            color: #636e72;
+            margin-bottom: 5px;
+        }
+
+        .growth-snippet-text {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .day-cell.has-notes::after {
+            content: "📝";
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            font-size: 8px;
+        }
+
+        .day-cell.broke-contact::after {
+            content: "💭";
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            font-size: 8px;
+        }
+
+        .reset-button {
+            background: #74b9ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(116, 185, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #636e72;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">🌸 Detachment Journey 🌸</div>
+            <div class="subtitle">Building strength through self-care</div>
+        </div>
+
+        <div class="streak-counter">
+            <div class="streak-number" id="streakNumber">0</div>
+            <div class="streak-label">Days Strong</div>
+        </div>
+
+        <div class="motivation" id="motivationText">
+            Every day you choose yourself is a victory! 💪
+        </div>
+
+        <div class="today-section">
+            <div class="today-title">Today's Goal: No Contact</div>
+            <button class="check-button" id="todayButton" onclick="markToday()">
+                ✨ Mark Today Complete ✨
+            </button>
+        </div>
+
+        <div class="week-view">
+            <div class="week-title">This Week</div>
+            <div class="week-grid" id="weekGrid"></div>
+        </div>
+
+        <div class="notes-section" id="notesSection" style="display: none;">
+            <div class="notes-title">Today's Journey</div>
+            <div class="today-actions">
+                <button class="add-note-button" onclick="openNoteModal()">
+                    📝 Add Note
+                </button>
+                <button class="broke-contact-button" onclick="openBrokeContactModal()" style="display: none;" id="brokeContactBtn">
+                    💭 I Broke Contact
+                </button>
+            </div>
+            <div class="notes-list" id="notesList"></div>
+        </div>
+
+        <div class="growth-section">
+            <button class="growth-button" onclick="openGrowthModal()">
+                🌱 View My Growth
+            </button>
+        </div>
+
+        <!-- Note Modal -->
+        <div class="modal" id="noteModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title">How are you feeling today?</span>
+                    <span class="close" onclick="closeModal('noteModal')">&times;</span>
+                </div>
+                <textarea id="noteInput" placeholder="Express yourself freely..."></textarea>
+                <button onclick="saveNote()">Save Note</button>
+            </div>
+        </div>
+
+        <!-- Broke Contact Modal -->
+        <div class="modal" id="brokeContactModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="modal-title">It's okay - let's reflect</span>
+                    <span class="close" onclick="closeModal('brokeContactModal')">&times;</span>
+                </div>
+                <textarea id="brokeContactInput" placeholder="What happened? How can you learn from this?"></textarea>
+                <button onclick="saveBrokeContact()">Save & Learn</button>
+            </div>
+        </div>
+
+        <!-- Growth Modal -->
+        <div class="modal" id="growthModal">
+            <div class="modal-content growth-modal">
+                <div class="modal-header">
+                    <span class="modal-title">🌱 Your Growth Journey</span>
+                    <span class="close" onclick="closeModal('growthModal')">&times;</span>
+                </div>
+                <div class="growth-tabs">
+                    <button class="growth-tab active" onclick="showGrowthPeriod('week')">This Week</button>
+                    <button class="growth-tab" onclick="showGrowthPeriod('month')">This Month</button>
+                </div>
+                <div class="growth-content" id="growthContent"></div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number" id="totalDays">0</div>
+                <div class="stat-label">Total Days</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="successRate">0%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number" id="bestStreak">0</div>
+                <div class="stat-label">Best Streak</div>
+            </div>
+        </div>
+
+        <button class="reset-button" onclick="resetTracker()">
+            🔄 Start Fresh
+        </button>
+    </div>
+
+    <script>
+        // Store data persistently in browser storage
+        let trackingData = loadData();
+
+        function loadData() {
+            const saved = localStorage.getItem('detachmentTracker');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // Convert completedDates array back to Set
+                parsed.completedDates = new Set(parsed.completedDates || []);
+                parsed.brokenContactDates = new Set(parsed.brokenContactDates || []);
+                return parsed;
+            }
+            return {
+                streak: 0,
+                bestStreak: 0,
+                totalDays: 0,
+                successfulDays: 0,
+                lastCompletedDate: null,
+                completedDates: new Set(),
+                brokenContactDates: new Set(),
+                notes: {}, // { 'date': [note1, note2, ...] }
+                brokenContactNotes: {} // { 'date': [note1, note2, ...] }
+            };
+        }
+
+        function saveData() {
+            // Convert Set to array for JSON storage
+            const dataToSave = {
+                ...trackingData,
+                completedDates: Array.from(trackingData.completedDates),
+                brokenContactDates: Array.from(trackingData.brokenContactDates)
+            };
+            localStorage.setItem('detachmentTracker', JSON.stringify(dataToSave));
+        }
+
+        const motivationalMessages = [
+            "Every day you choose yourself is a victory! 💪",
+            "You're building inner strength one day at a time! ✨",
+            "Freedom feels amazing, doesn't it? 🦋",
+            "Your future self thanks you for this! 🌟",
+            "Healing happens in the space you create! 🌸",
+            "You're worth this effort and so much more! 💖",
+            "Each day of peace is a gift to yourself! 🎁",
+            "Strong boundaries create beautiful lives! 🌺",
+            "You're learning to love yourself first! 💕",
+            "This is what self-respect looks like! 👑"
+        ];
+
+        function getTodayString() {
+            return new Date().toDateString();
+        }
+
+        function markToday() {
+            const today = getTodayString();
+            const button = document.getElementById('todayButton');
+            
+            if (trackingData.completedDates.has(today)) {
+                return; // Already marked today
+            }
+
+            // Mark today as complete
+            trackingData.completedDates.add(today);
+            trackingData.successfulDays++;
+            trackingData.totalDays = Math.max(trackingData.totalDays, trackingData.successfulDays);
+            
+            // Update streak
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayString = yesterday.toDateString();
+            
+            if (trackingData.lastCompletedDate === yesterdayString || trackingData.streak === 0) {
+                trackingData.streak++;
+            } else {
+                trackingData.streak = 1;
+            }
+            
+            trackingData.lastCompletedDate = today;
+            trackingData.bestStreak = Math.max(trackingData.bestStreak, trackingData.streak);
+            
+            // Save progress
+            saveData();
+            
+            // Update button
+            button.textContent = "✅ Completed Today!";
+            button.classList.add('completed');
+            
+            // Update displays
+            updateDisplay();
+            showRandomMotivation();
+        }
+
+        function showRandomMotivation() {
+            const motivation = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+            document.getElementById('motivationText').textContent = motivation;
+        }
+
+        function updateDisplay() {
+            document.getElementById('streakNumber').textContent = trackingData.streak;
+            document.getElementById('totalDays').textContent = trackingData.totalDays;
+            document.getElementById('bestStreak').textContent = trackingData.bestStreak;
+            
+            const successRate = trackingData.totalDays > 0 ? 
+                Math.round((trackingData.successfulDays / trackingData.totalDays) * 100) : 0;
+            document.getElementById('successRate').textContent = successRate + '%';
+            
+            updateWeekView();
+            updateTodayButton();
+        }
+
+        function updateTodayButton() {
+            const today = getTodayString();
+            const button = document.getElementById('todayButton');
+            
+            if (trackingData.completedDates.has(today)) {
+                button.textContent = "✅ Completed Today!";
+                button.classList.add('completed');
+            } else {
+                button.textContent = "✨ Mark Today Complete ✨";
+                button.classList.remove('completed');
+            }
+        }
+
+        function updateWeekView() {
+            const grid = document.getElementById('weekGrid');
+            grid.innerHTML = '';
+            
+            const today = new Date();
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            // Add day headers
+            dayNames.forEach(day => {
+                const cell = document.createElement('div');
+                cell.className = 'day-cell day-header';
+                cell.textContent = day;
+                grid.appendChild(cell);
+            });
+            
+            // Calculate week start (Sunday)
+            const weekStart = new Date(today);
+            weekStart.setDate(today.getDate() - today.getDay());
+            
+            // Add 7 days of the current week
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(weekStart);
+                date.setDate(weekStart.getDate() + i);
+                const dateString = date.toDateString();
+                const todayString = getTodayString();
+                
+                const cell = document.createElement('div');
+                cell.className = 'day-cell';
+                cell.textContent = date.getDate();
+                
+                if (dateString === todayString) {
+                    cell.classList.add('day-today');
+                    cell.textContent += '📍';
+                } else if (date > today) {
+                    cell.classList.add('day-future');
+                } else if (trackingData.completedDates.has(dateString)) {
+                    cell.classList.add('day-success');
+                    cell.textContent += '✅';
+                } else if (date < today) {
+                    cell.classList.add('day-missed');
+                    cell.textContent += '○';
+                }
+                
+                grid.appendChild(cell);
+            }
+        }
+
+        function resetTracker() {
+            if (confirm('Are you sure you want to start fresh? This will reset all your progress.')) {
+                trackingData = {
+                    streak: 0,
+                    bestStreak: 0,
+                    totalDays: 0,
+                    successfulDays: 0,
+                    lastCompletedDate: null,
+                    completedDates: new Set(),
+                    brokenContactDates: new Set(),
+                    notes: {},
+                    brokenContactNotes: {}
+                };
+                saveData();
+                updateDisplay();
+                showRandomMotivation();
+            }
+        }
+
+        // Check if today is already completed when page loads
+        function checkTodayStatus() {
+            const today = getTodayString();
+            if (!trackingData.completedDates.has(today)) {
+                // Only increment total days if this is a new day we haven't seen before
+                const hasAnyCompletedDays = trackingData.completedDates.size > 0;
+                if (hasAnyCompletedDays) {
+                    trackingData.totalDays++;
+                    saveData();
+                }
+            }
+        }
+
+        // Notes functionality
+        function openNoteModal() {
+            document.getElementById('noteModal').style.display = 'block';
+            document.getElementById('noteInput').focus();
+        }
+
+        function openBrokeContactModal() {
+            if (confirm('This will mark today as incomplete. Are you sure?')) {
+                document.getElementById('brokeContactModal').style.display = 'block';
+                document.getElementById('brokeContactInput').focus();
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            // Clear inputs
+            if (modalId === 'noteModal') {
+                document.getElementById('noteInput').value = '';
+            } else if (modalId === 'brokeContactModal') {
+                document.getElementById('brokeContactInput').value = '';
+            }
+        }
+
+        function saveNote() {
+            const noteText = document.getElementById('noteInput').value.trim();
+            if (!noteText) return;
+
+            const today = getTodayString();
+            if (!trackingData.notes[today]) {
+                trackingData.notes[today] = [];
+            }
+            
+            trackingData.notes[today].push({
+                text: noteText,
+                time: new Date().toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    hour12: true 
+                })
+            });
+            
+            saveData();
+            updateNotesDisplay();
+            closeModal('noteModal');
+        }
+
+        function saveBrokeContact() {
+            const noteText = document.getElementById('brokeContactInput').value.trim();
+            if (!noteText) return;
+
+            const today = getTodayString();
+            
+            // Move existing notes to broken contact category
+            if (trackingData.notes[today]) {
+                trackingData.brokenContactNotes[today] = trackingData.notes[today];
+                delete trackingData.notes[today];
+            } else {
+                trackingData.brokenContactNotes[today] = [];
+            }
+            
+            // Add the broken contact note
+            trackingData.brokenContactNotes[today].push({
+                text: noteText,
+                time: new Date().toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    hour12: true 
+                })
+            });
+            
+            // Remove from completed dates and add to broken contact dates
+            trackingData.completedDates.delete(today);
+            trackingData.brokenContactDates.add(today);
+            trackingData.successfulDays = Math.max(0, trackingData.successfulDays - 1);
+            
+            // Reset streak
+            trackingData.streak = 0;
+            
+            saveData();
+            updateDisplay();
+            updateNotesDisplay();
+            closeModal('brokeContactModal');
+        }
+
+        function deleteNote(date, index, isBrokenContact = false) {
+            if (confirm('Delete this note?')) {
+                const notesKey = isBrokenContact ? 'brokenContactNotes' : 'notes';
+                trackingData[notesKey][date].splice(index, 1);
+                
+                // If no notes left for this date, remove the date entry
+                if (trackingData[notesKey][date].length === 0) {
+                    delete trackingData[notesKey][date];
+                }
+                
+                saveData();
+                updateNotesDisplay();
+            }
+        }
+
+        function updateNotesDisplay() {
+            const today = getTodayString();
+            const notesSection = document.getElementById('notesSection');
+            const notesList = document.getElementById('notesList');
+            const brokeContactBtn = document.getElementById('brokeContactBtn');
+            
+            // Show notes section only if today is completed or has broken contact
+            const todayCompleted = trackingData.completedDates.has(today);
+            const todayBrokenContact = trackingData.brokenContactDates.has(today);
+            
+            if (todayCompleted || todayBrokenContact) {
+                notesSection.style.display = 'block';
+                brokeContactBtn.style.display = todayCompleted ? 'block' : 'none';
+            } else {
+                notesSection.style.display = 'none';
+                return;
+            }
+            
+            // Display notes for today
+            let notesHtml = '';
+            
+            // Show successful day notes
+            if (trackingData.notes[today]) {
+                trackingData.notes[today].forEach((note, index) => {
+                    notesHtml += `
+                        <div class="note-item">
+                            <div class="note-text">${note.text}</div>
+                            <div class="note-time">${note.time}</div>
+                            <button class="note-delete" onclick="deleteNote('${today}', ${index}, false)">×</button>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Show broken contact notes
+            if (trackingData.brokenContactNotes[today]) {
+                trackingData.brokenContactNotes[today].forEach((note, index) => {
+                    notesHtml += `
+                        <div class="note-item broken-contact">
+                            <div class="note-text">${note.text}</div>
+                            <div class="note-time">${note.time}</div>
+                            <button class="note-delete" onclick="deleteNote('${today}', ${index}, true)">×</button>
+                        </div>
+                    `;
+                });
+            }
+            
+            notesList.innerHTML = notesHtml;
+        }
+
+        function openGrowthModal() {
+            document.getElementById('growthModal').style.display = 'block';
+            showGrowthPeriod('week');
+        }
+
+        function showGrowthPeriod(period) {
+            // Update tab appearance
+            document.querySelectorAll('.growth-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            const content = document.getElementById('growthContent');
+            const snippets = getGrowthSnippets(period);
+            
+            if (snippets.length === 0) {
+                content.innerHTML = '<p style="text-align: center; color: #636e72; padding: 20px;">No notes yet for this period. Keep going! 💪</p>';
+                return;
+            }
+            
+            let html = '';
+            snippets.forEach(snippet => {
+                html += `
+                    <div class="growth-snippet">
+                        <div class="growth-snippet-date">${snippet.date}</div>
+                        <div class="growth-snippet-text">${snippet.text}</div>
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+        }
+
+        function getGrowthSnippets(period) {
+            const now = new Date();
+            const cutoff = new Date();
+            
+            if (period === 'week') {
+                cutoff.setDate(now.getDate() - 7);
+            } else {
+                cutoff.setMonth(now.getMonth() - 1);
+            }
+            
+            const snippets = [];
+            
+            // Get positive notes from successful days
+            Object.keys(trackingData.notes).forEach(dateString => {
+                const date = new Date(dateString);
+                if (date >= cutoff) {
+                    trackingData.notes[dateString].forEach(note => {
+                        if (note.text.length > 20) { // Only meaningful notes
+                            snippets.push({
+                                date: new Date(dateString).toLocaleDateString(),
+                                text: note.text.length > 100 ? note.text.substring(0, 100) + '...' : note.text
+                            });
+                        }
+                    });
+                }
+            });
+            
+            // Sort by date (most recent first)
+            snippets.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            return snippets.slice(0, 10); // Limit to 10 most recent
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            checkTodayStatus();
+            updateDisplay();
+            showRandomMotivation();
+            
+            // Show random motivation every 30 seconds
+            setInterval(showRandomMotivation, 30000);
+        });
+    </script>
+</body>
+</html>
